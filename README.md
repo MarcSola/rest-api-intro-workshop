@@ -1,5 +1,5 @@
 `mongodb` `#assembler-school` `#master-in-software-engineering`
-s
+
 
 # Assembler School: Node.js REST API Design Intro Workshop <!-- omit in toc -->
 
