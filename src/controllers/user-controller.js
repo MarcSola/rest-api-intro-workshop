@@ -43,37 +43,23 @@ async function register(req, res, next) {
   }
 }
 
-// user sign in
+// user sign in and sign up if user does not exist.
 async function userSignIn(req, res, next) {
-  const { email, password } = req.body;
+  const { uid, email } = req.user;
   try {
     const foundUser = await db.User.findOne({ email: email });
     if (foundUser === null) {
-      return res.status(400).send(`User does not exist`);
-    } else {
-      const matchPassword = await compareEncrypted({
-        plainData: password,
-        encryptedData: foundUser.password,
+      console.log(uid);
+      console.log(email);
+      await db.User.create({
+        firebaseId: uid,
+        email: email,
       });
-      if (matchPassword) {
-        // generate the access token
-        const accessToken = generateAccessToken({ foundUser });
-
-        // generating random refresh token and storing it
-        // in the session data key.
-        const refreshToken = randToken.generate(256);
-        sessionData.refreshTokens[refreshToken] = foundUser.email;
-
-        // return response
-        return res.status(200).send({
-          message: `Welcome ${foundUser.firstName}`,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-          id: foundUser._id,
-        });
-      } else if (!matchPassword) {
-        return res.status(400).send(`Wrong password`);
-      }
+    } else {
+      res.status(200).send({
+        email: email,
+        uid: uid,
+      });
     }
   } catch (err) {
     return res.status(500).send({

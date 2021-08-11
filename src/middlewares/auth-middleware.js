@@ -1,32 +1,32 @@
-const { getAuthToken, verifyAuthToken } = require("../services/auth");
-const db = require("../models");
+const { auth } = require("../services/firebase-auth/firebase");
+// const db = require("../models");
 
 async function authMiddleware(req, res, next) {
-  try {
-    // Checking authoritzation header and getting the auth token
-    const bearerToken = await getAuthToken(req.headers);
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    // the authorization token is coming in as:
+    // Bearer eyJhb.....
+    const bearerToken = req.headers.authorization.substr(7);
+    try {
+      const userClaims = await auth.verifyIdToken(bearerToken);
 
-    // Verifying the auth token
-    const userClaims = await verifyAuthToken(bearerToken);
+      const { email, uid } = userClaims;
 
-    const user = await db.User.find({
-      email: userClaims.email,
-    });
-    console.log(user);
-    if (!user) {
-      throw new Error("Invalid token");
+      req.user = {
+        email: email,
+        id: uid,
+      };
+
+      next();
+    } catch (error) {
+      next(error);
     }
-
-    req.user = {
-      email: userClaims.email,
-      id: user._id,
-    };
-
-    next();
-  } catch (error) {
+  } else {
     res.status(401).send({
       data: null,
-      error: error.message,
+      error: "Unauthorized",
     });
   }
 }

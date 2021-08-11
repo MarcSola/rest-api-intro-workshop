@@ -11,24 +11,24 @@ const { userController } = require("../controllers");
 // Routing for every request/response
 
 // get all users
-userRouter.get("/", authMiddleware, userController.getUsers);
+userRouter.get("/users", authMiddleware, userController.getUsers);
 
 // get user by id
-userRouter.get("/:id", authMiddleware, userController.getUserById);
+userRouter.get("/users/:id", authMiddleware, userController.getUserById);
 
 // register new user
-userRouter.post("/register", authMiddleware, userController.register);
+// userRouter.post("/users/register", authMiddleware, userController.register);
 
 // user sign in
-userRouter.post("/signin", userController.userSignIn);
+userRouter.post("/users/signin", authMiddleware, userController.userSignIn);
 
 // user sign in
-userRouter.post("/refreshtoken", userController.refreshToken);
+// userRouter.post("/users/refreshtoken", userController.refreshToken);
 
 // update user
-userRouter.patch("/:id", authMiddleware, userController.updateUserById);
+userRouter.patch("/users/:id", authMiddleware, userController.updateUserById);
 
 // delete user
-userRouter.delete("/:id", authMiddleware, userController.deleteUserById);
+userRouter.delete("/users/:id", authMiddleware, userController.deleteUserById);
 
 module.exports = userRouter;

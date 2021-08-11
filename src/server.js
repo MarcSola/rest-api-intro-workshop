@@ -6,10 +6,14 @@ const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const { json } = require("body-parser");
+const cors = require("cors");
 
 // Imports for router and middleware variables
 const routers = require("./routes");
 // const { errorMiddleware } = require("./middlewares");
+
+// Import for config variable
+config = require("./config");
 
 // Creating the app object using the express dependency
 const app = express();
@@ -19,9 +23,10 @@ const app = express();
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(json());
+app.use(cors());
 
 // Setting up base URL for the different router endpoints
-app.use("/users", routers.userRouter);
+app.use(routers.userRouter);
 // app.use("/account", accountRouter);
 
 app.get("/", (req, res) => {

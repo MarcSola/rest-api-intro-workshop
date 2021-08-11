@@ -17,6 +17,11 @@ const { isEmail } = require("validator");
 // modification
 const UserSchema = mongoose.Schema(
   {
+    firebaseId:{
+      type: String,
+      trim: true,
+      unique: true,
+    },
     firstName: {
       type: String,
       trim: true,
